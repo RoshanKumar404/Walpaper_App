@@ -3,7 +3,6 @@ import { View, Text, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Account from './src/BottomTabs/Account';
 import ForYou from './src/BottomTabs/ForYou';
 import Explore from './src/BottomTabs/Explore';
 import AccountDetails from './src/StackScreens/AcountDetails';
