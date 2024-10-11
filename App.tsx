@@ -3,12 +3,13 @@ import { View, Text, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ForYou from './src/BottomTabs/ForYou';
+import ForYou, { MyTabs } from './src/BottomTabs/ForYou';
 import Explore from './src/BottomTabs/Explore';
 import AccountDetails from './src/StackScreens/AcountDetails';
 import TermsOfService from './src/StackScreens/TermsOfService';
 import PrivacyPolicy from './src/StackScreens/PrivacyPolicy';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Suggested from './src/TopTabs/Suggested';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -32,8 +33,9 @@ function App() {
         {/* Normal tab screens */}
         <Tab.Screen
           name="For you"
-          component={ForYou}
+          component={MyTabs}
           options={{
+             headerShown: false,
             tabBarLabel: 'For You',
             tabBarIcon: ({ color, size }) => (
               <FontAwesome5 name="cube" color={color} size={size} />
