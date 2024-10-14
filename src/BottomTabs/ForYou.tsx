@@ -1,24 +1,23 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import ForYou from '../TopTabs/Suggested';
-import Liked from '../TopTabs/Liked';
 import Library from '../TopTabs/Library';
+import Liked from '../TopTabs/Liked';
 import Suggested from '../TopTabs/Suggested';
 
 const Tab = createMaterialTopTabNavigator();
 
-export function MyTabs() {
+function TopTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
         tabBarLabelStyle: {
-          fontSize: 16, // Adjust as needed
+          fontSize: 16, 
           fontWeight: 'bold',
         },
         tabBarIndicatorStyle: {
-          backgroundColor: '#3382da', // Indicator color
+          backgroundColor: '#3382da', 
         },
-        tabBarActiveTintColor: '#3382da',  // Active tab color
-        tabBarInactiveTintColor: 'gray',  // Inactive tab color
+        tabBarActiveTintColor: '#3382da',  
+        tabBarInactiveTintColor: 'gray',  
       }}
     >
       <Tab.Screen name="Suggested" component={Suggested} />
@@ -27,3 +26,5 @@ export function MyTabs() {
     </Tab.Navigator>
   );
 }
+
+export default TopTabs;
