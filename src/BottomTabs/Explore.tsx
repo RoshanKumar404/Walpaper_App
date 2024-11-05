@@ -8,6 +8,7 @@ export default function Explore() {
       </Text>
 
       <Text>commit hua ki nahi yahio chek  kr rhe hia</Text>
+      <Text>jai sri ram</Text>
     </View>
   )
 }
