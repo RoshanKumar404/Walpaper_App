@@ -9,6 +9,8 @@ import {
   Dimensions,
   ActivityIndicator,
 } from 'react-native';
+import { createWallpaperFile } from '../fielsystem/filecreation';
+
 
 export default function BottomSheetApp({
   visible,
@@ -20,6 +22,8 @@ export default function BottomSheetApp({
   ImageArtist,
 }) {
   const [loading, setLoading] = React.useState(true);
+
+  
 
   return (
     <Modal
@@ -50,7 +54,10 @@ export default function BottomSheetApp({
             <Text style={styles.imageName}>{imageName}</Text>
           )}
 
-          <Pressable onPress={onClose} style={styles.closeButton}>
+          <Pressable onPress={()=>{
+            createWallpaperFile();
+            onClose();
+          }} style={styles.closeButton}>
             <Text style={styles.buttonText}>Get Wallpaper</Text>
           </Pressable>
 
