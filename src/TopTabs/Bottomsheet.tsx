@@ -8,9 +8,11 @@ import {
   Pressable,
   Dimensions,
   ActivityIndicator,
+  PermissionsAndroid,
+  Platform,
+  Alert,
 } from 'react-native';
-import { createWallpaperFile } from '../fielsystem/filecreation';
-
+import RNFetchBlob from 'react-native-blob-util';
 
 export default function BottomSheetApp({
   visible,
@@ -23,7 +25,51 @@ export default function BottomSheetApp({
 }) {
   const [loading, setLoading] = React.useState(true);
 
-  
+  // const requestStoragePermission = async () => {
+  //   if (Platform.OS === 'android' && Platform.Version >= 30) {
+  //     const granted = await PermissionsAndroid.request(
+  //       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  //       {
+  //         title: 'Storage Permission Required',
+  //         message: 'App needs access to your storage to download images.',
+  //         buttonNeutral: 'Ask Me Later',
+  //         buttonNegative: 'Cancel',
+  //         buttonPositive: 'OK',
+  //       }
+  //     );
+  //     return granted === PermissionsAndroid.RESULTS.GRANTED;
+  //   }
+  //   return true;
+  // };
+
+  const downloadImage = async () => {
+    // const hasPermission = await requestStoragePermission();
+    // if (!hasPermission) {
+    //   Alert.alert('Permission Denied', 'Cannot download without storage permission');
+    //   return;
+    // }
+
+    const {config, fs} = RNFetchBlob;
+    const date = new Date();
+    const filePath = `${fs.dirs.DownloadDir}/wallpaper_${date.getTime()}.jpg`;
+
+    config({
+      fileCache: true,
+      addAndroidDownloads: {
+        useDownloadManager: true,
+        notification: true,
+        path: filePath,
+        description: 'Downloading wallpaper',
+      },
+    })
+      .fetch('GET', imageUri)
+      .then((res) => {
+        Alert.alert('Download Successful', `Image saved to: ${res.path()}`);
+      })
+      .catch((error) => {
+        console.error('Download Error:', error);
+      });
+  };
 
   return (
     <Modal
@@ -35,7 +81,6 @@ export default function BottomSheetApp({
         <View style={styles.box}>
           {imageUri && (
             <>
-             
               {loading && (
                 <ActivityIndicator
                   style={styles.loader}
@@ -53,14 +98,14 @@ export default function BottomSheetApp({
           {imageName && (
             <Text style={styles.imageName}>{imageName}</Text>
           )}
-
-          <Pressable onPress={()=>{
-            createWallpaperFile();
-            onClose();
-          }} style={styles.closeButton}>
+          <Pressable
+            onPress={() => {
+              downloadImage();
+              onClose();
+            }}
+            style={styles.closeButton}>
             <Text style={styles.buttonText}>Get Wallpaper</Text>
           </Pressable>
-
           <View style={styles.details}>
             {ImageArtist && (
               <Text style={styles.detailText}>Artist: {ImageArtist}</Text>
@@ -85,11 +130,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0,0.8)', 
+    backgroundColor: 'rgba(0, 0, 0,0.8)',
   },
   box: {
     width: '90%',
-    height: height * 0.8, 
+    height: height * 0.8,
     backgroundColor: 'black',
     borderRadius: 20,
     padding: 20,
@@ -120,7 +165,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignSelf: 'center',
     position: 'absolute',
-    bottom: 20, 
+    bottom: 20,
   },
   buttonText: {
     fontSize: 24,

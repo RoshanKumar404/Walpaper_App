@@ -161,7 +161,7 @@ export default function Suggested() {
         {HorizontalScrollViewImages.map((image, index) => (
           <Pressable key={index} onPress={() => imagePressed(image)}>
             <View style={styles.cardContainer}>
-              <Image source={{uri: image.uri}} style={styles.image} />
+              <Image key={index} source={{uri: image.uri}} style={styles.image} />
               <View style={styles.overlay}>
                 <FontAwesome5 name="heart" size={24} color="red" />
               </View>
