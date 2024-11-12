@@ -1,4 +1,10 @@
 {
   "name": "Walpaper_App",
-  "displayName": "Walpaper_App"
+  "displayName": "Walpaper_App",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-4394707558760404~9878961308",
+    "ios_app_id": "ca-app-pub-xxxxxxxx~xxxxxxxx"
+  }
+
 }
+
