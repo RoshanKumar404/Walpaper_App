@@ -4,7 +4,7 @@ import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads'
 
 const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-4394707558760404~9878961308';
 
-export default function Liked() {
+export default function BanerAds() {
   return (
     <View style={styles.container}>
       

@@ -12,6 +12,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+
 import RNFetchBlob from 'react-native-blob-util';
 
 export default function BottomSheetApp({
@@ -24,6 +25,7 @@ export default function BottomSheetApp({
   ImageArtist,
 }) {
   const [loading, setLoading] = React.useState(true);
+  //const  {loaded,ShowAd}= Rewarded_Ads();
 
   // const requestStoragePermission = async () => {
   //   if (Platform.OS === 'android' && Platform.Version >= 30) {
@@ -100,6 +102,8 @@ export default function BottomSheetApp({
           )}
           <Pressable
             onPress={() => {
+              
+              // <Rewarded_Ads />
               downloadImage();
               onClose();
             }}
