@@ -23,10 +23,11 @@ const SUGGESTIONS_DATA = [
 
 export default function LikedScreen() {
   return (
+    // <View>
     <View style={styles.likedScreenContainer}>
-      {/* <View>
+     
         <BanerAds/>
-      </View> */}
+      
       <View style={styles.profileContainer}>
         <Image
           source={require('../constants/Unknown_person.jpg')}
@@ -40,6 +41,7 @@ export default function LikedScreen() {
      <View style={styles.favourite}>
       <Text style={styles.noFavoritesText}>No favorites found</Text>
       <Icon name="heart" size={70} color="red" />
+      
       <Text style={styles.subText}>(wallpapers you "like" will appear here)</Text>
       </View>
    
@@ -60,7 +62,7 @@ export default function LikedScreen() {
         columnWrapperStyle={styles.columnWrapper}
       />
       </View>
-    // </View>
+     //</View>
   );
 }
 
@@ -85,7 +87,7 @@ const styles = StyleSheet.create({
   favourite:{
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    padding:5,
   },
   editIcon: {
     position: 'absolute',
