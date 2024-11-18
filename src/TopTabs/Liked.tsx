@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, Pressable, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BanerAds from '../Ads/BannerAds';
@@ -21,7 +21,12 @@ const SUGGESTIONS_DATA = [
  
 ];
 
+
 export default function LikedScreen() {
+  const [liked, setliked]=useState([])    
+ const [pressed,setpressed]=useState(null)
+ const [modalVisible,setModalVisible]=useState(false)
+ 
   return (
     // <View>
     <View style={styles.likedScreenContainer}>
@@ -52,9 +57,14 @@ export default function LikedScreen() {
       <FlatList
         data={SUGGESTIONS_DATA}
         renderItem={({ item }) => (
+          // <Pressable key={id} onPress={}>
           <View style={styles.suggestionItem}>
             <Image source={{ uri: item.image }} style={styles.suggestionImage} />
+            <View style={styles.Overlays}>
+            <Icon name="heart-outline" size={16} color="red" />
+            </View>
           </View>
+          // </Pressable>
         )}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={true}
@@ -113,6 +123,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 30,
     marginBottom: 10,
+  },
+  Overlays:{
+    position:'absolute',
+    top:5,
+    right:5,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 15,
+    padding: 5,
+
   },
   // container:{
   //   flex:1,
