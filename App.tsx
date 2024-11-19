@@ -10,6 +10,7 @@ import PrivacyPolicy from './src/StackScreens/PrivacyPolicy';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Suggested from './src/TopTabs/Suggested';
 import TopTabs, {BottomTabs} from './src/BottomTabs/ForYou'
+import UseRewardedAd from './src/Ads/RewardedAds';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -28,7 +29,9 @@ function HomeStack() {
 
 function App() {
   return (
+    
     <NavigationContainer>
+      
       <Tab.Navigator>
        
         <Tab.Screen

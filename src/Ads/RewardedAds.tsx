@@ -4,7 +4,7 @@ import { RewardedAd, RewardedAdEventType, TestIds } from 'react-native-google-mo
 
 const adUnitId = __DEV__ ? TestIds.REWARDED : 'ca-app-pub-4394707558760404~9878961308';
 
-export function useRewardedAd() {
+export default function UseRewardedAd() {
   const [loaded, setLoaded] = useState(false);
 
   const rewarded = RewardedAd.createForAdRequest(adUnitId, {

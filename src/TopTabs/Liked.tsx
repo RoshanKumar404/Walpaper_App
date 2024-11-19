@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, Pressable, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BanerAds from '../Ads/BannerAds';
+import { useDispatch, useSelector } from 'react-redux';
+import { addtoliked } from '../redux/action';
 
 
 const SUGGESTIONS_DATA = [
@@ -21,19 +23,24 @@ const SUGGESTIONS_DATA = [
  
 ];
 
-
 export default function LikedScreen() {
-  const [liked, setliked]=useState([])    
- const [pressed,setpressed]=useState(null)
- const [modalVisible,setModalVisible]=useState(false)
- 
+//   const [liked, setliked]=useState([])    
+//  const [pressed,setpressed]=useState(null)
+//  const [modalVisible,setModalVisible]=useState(false)
+ const dispatch=useDispatch();
+ const likedImages= useSelector((state)=>state.Likereducer.likedImages)
+ const likeHandler=(item)=>{
+  console.warn("just clikable",item);
+  dispatch(addtoliked(item))
+ }
+ //const isLiked = likedImages.some((image) => image.id === item.id);
   return (
     // <View>
     <View style={styles.likedScreenContainer}>
      
         <BanerAds/>
       
-      <View style={styles.profileContainer}>
+      {/* <View style={styles.profileContainer}>
         <Image
           source={require('../constants/Unknown_person.jpg')}
           style={styles.profileImage}
@@ -41,14 +48,28 @@ export default function LikedScreen() {
         <Pressable style={styles.editIcon}>
           <Icon name="pencil" size={16} color="white" />
         </Pressable>
-      </View>
+      </View> */}
       
-     <View style={styles.favourite}>
-      <Text style={styles.noFavoritesText}>No favorites found</Text>
-      <Icon name="heart" size={70} color="red" />
-      
-      <Text style={styles.subText}>(wallpapers you "like" will appear here)</Text>
+      {likedImages.length > 0 ? (
+  <FlatList
+    data={likedImages.filter((item) => item && item.id)}
+    renderItem={({ item }) => (
+      <View style={styles.suggestionItem}>
+        <Image source={{ uri: item.image }} style={styles.suggestionImage} />
       </View>
+    )}
+    keyExtractor={(item, index) => (item?.id ? item.id.toString() : index.toString())}
+    numColumns={2}
+    columnWrapperStyle={styles.columnWrapper}
+  />
+) : (
+  <View style={styles.favourite}>
+    <Text style={styles.noFavoritesText}>No favorites found</Text>
+    <Icon name="heart" size={70} color="red" />
+    <Text style={styles.subText}>(wallpapers you "like" will appear here)</Text>
+  </View>
+)}
+
    
       <Text style={styles.suggestionsHeader}>Suggestions for you</Text>
 
@@ -61,7 +82,9 @@ export default function LikedScreen() {
           <View style={styles.suggestionItem}>
             <Image source={{ uri: item.image }} style={styles.suggestionImage} />
             <View style={styles.Overlays}>
+            <Pressable onPress={()=>likeHandler(item)}>
             <Icon name="heart-outline" size={16} color="red" />
+            </Pressable>
             </View>
           </View>
           // </Pressable>

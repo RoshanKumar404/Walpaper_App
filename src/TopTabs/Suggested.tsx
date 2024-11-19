@@ -9,13 +9,15 @@ import {
 import React, {useState} from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import BottomSheetApp from './Bottomsheet';
+import { addtoliked } from '../redux/action';
+import { useDispatch } from 'react-redux';
 
 export default function Suggested() {
   const [pressed, setpressed] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const imagePressed = image => {
-    setpressed(image); // Pass the entire image object
+    setpressed(image); 
     setModalVisible(true);
   };
 
@@ -133,7 +135,11 @@ export default function Suggested() {
     },
   
   ];
-
+  const dispatch=useDispatch()
+  const likeHandler=(id)=>{
+   console.warn("just clikable",id);
+   dispatch(addtoliked(id))
+  }
   return (
     <View>
       <View style={styles.horizontalviewcontainer}>
@@ -181,7 +187,9 @@ export default function Suggested() {
             <View style={styles.cardContainer}>
               <Image key={id} source={{uri: image.uri}} style={styles.image} />
               <View style={styles.overlay}>
+                <Pressable onPress={()=>likeHandler(id)}>
                 <FontAwesome5 name="heart" size={24} color="red" />
+                </Pressable>
               </View>
             </View>
           </Pressable>

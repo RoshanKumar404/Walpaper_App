@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   Modal,
@@ -8,12 +8,10 @@ import {
   Pressable,
   Dimensions,
   ActivityIndicator,
-  PermissionsAndroid,
-  Platform,
   Alert,
 } from 'react-native';
-
 import RNFetchBlob from 'react-native-blob-util';
+import { RewardedAd, RewardedAdEventType, TestIds } from 'react-native-google-mobile-ads';
 
 export default function BottomSheetApp({
   visible,
@@ -24,54 +22,73 @@ export default function BottomSheetApp({
   imageRes,
   ImageArtist,
 }) {
-  const [loading, setLoading] = React.useState(true);
-  //const  {loaded,ShowAd}= Rewarded_Ads();
+  const [loading, setLoading] = useState(true);
+  const [adLoaded, setAdLoaded] = useState(false);
 
-  // const requestStoragePermission = async () => {
-  //   if (Platform.OS === 'android' && Platform.Version >= 30) {
-  //     const granted = await PermissionsAndroid.request(
-  //       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-  //       {
-  //         title: 'Storage Permission Required',
-  //         message: 'App needs access to your storage to download images.',
-  //         buttonNeutral: 'Ask Me Later',
-  //         buttonNegative: 'Cancel',
-  //         buttonPositive: 'OK',
-  //       }
-  //     );
-  //     return granted === PermissionsAndroid.RESULTS.GRANTED;
-  //   }
-  //   return true;
-  // };
+  const adUnitId = __DEV__ ? TestIds.REWARDED : 'ca-app-pub-4394707558760404~9878961308';
+  const rewarded = RewardedAd.createForAdRequest(adUnitId);
+
+  useEffect(() => {
+    const onAdLoaded = rewarded.addAdEventListener(RewardedAdEventType.LOADED, () => {
+      setAdLoaded(true);
+      console.log("add loaded");
+      
+    });
+    
+  
+    const onAdEarnedReward = rewarded.addAdEventListener(RewardedAdEventType.EARNED_REWARD, (reward) => {
+      console.log('User earned reward:', reward);
+      Alert.alert('Reward Earned', `You earned: ${reward.amount} ${reward.type}`);
+    });
+  
+    rewarded.load();
+  
+    return () => {
+      onAdLoaded(); // Cleanup listener
+      onAdEarnedReward(); // Cleanup listener
+    };
+  }, []);
+  
 
   const downloadImage = async () => {
-    // const hasPermission = await requestStoragePermission();
-    // if (!hasPermission) {
-    //   Alert.alert('Permission Denied', 'Cannot download without storage permission');
-    //   return;
-    // }
+    try {
+      const { config, fs } = RNFetchBlob;
+      const date = new Date();
+      const filePath = `${fs.dirs.DownloadDir}/wallpaper_${date.getTime()}.jpg`;
 
-    const {config, fs} = RNFetchBlob;
-    const date = new Date();
-    const filePath = `${fs.dirs.DownloadDir}/wallpaper_${date.getTime()}.jpg`;
-
-    config({
-      fileCache: true,
-      addAndroidDownloads: {
-        useDownloadManager: true,
-        notification: true,
-        path: filePath,
-        description: 'Downloading wallpaper',
-      },
-    })
-      .fetch('GET', imageUri)
-      .then((res) => {
-        Alert.alert('Download Successful', `Image saved to: ${res.path()}`);
+      config({
+        fileCache: true,
+        addAndroidDownloads: {
+          useDownloadManager: true,
+          notification: true,
+          path: filePath,
+          description: 'Downloading wallpaper',
+        },
       })
-      .catch((error) => {
-        console.error('Download Error:', error);
-      });
+        .fetch('GET', imageUri)
+        .then((res) => {
+          Alert.alert('Download Successful', `Image saved to: ${res.path()}`);
+        })
+        .catch((error) => {
+          console.error('Download Error:', error);
+          Alert.alert('Download Failed', 'Could not download the image.');
+        });
+    } catch (error) {
+      console.error('Permission Error:', error);
+    }
   };
+
+  const handleGetWallpaper = () => {
+    if (adLoaded) {
+      rewarded.show();
+      rewarded.load(); // Prepare the next ad
+      downloadImage();
+      onClose();
+    } else {
+      Alert.alert('Ad Not Ready', 'Please wait for the ad to load.');
+    }
+  };
+  
 
   return (
     <Modal
@@ -101,12 +118,7 @@ export default function BottomSheetApp({
             <Text style={styles.imageName}>{imageName}</Text>
           )}
           <Pressable
-            onPress={() => {
-              
-              // <Rewarded_Ads />
-              downloadImage();
-              onClose();
-            }}
+            onPress={handleGetWallpaper}
             style={styles.closeButton}>
             <Text style={styles.buttonText}>Get Wallpaper</Text>
           </Pressable>
