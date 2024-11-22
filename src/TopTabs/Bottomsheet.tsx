@@ -11,7 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import RNFetchBlob from 'react-native-blob-util';
-import { RewardedAd, RewardedAdEventType, TestIds } from 'react-native-google-mobile-ads';
+import { AdEventType, RewardedAd, RewardedAdEventType, TestIds } from 'react-native-google-mobile-ads';
 
 export default function BottomSheetApp({
   visible,
@@ -24,6 +24,7 @@ export default function BottomSheetApp({
 }) {
   const [loading, setLoading] = useState(true);
   const [adLoaded, setAdLoaded] = useState(false);
+  const [reloadKey,setReloadKey]=useState(0)
 
   const adUnitId = __DEV__ ? TestIds.REWARDED : 'ca-app-pub-4394707558760404~9878961308';
   const rewarded = RewardedAd.createForAdRequest(adUnitId);
@@ -39,13 +40,17 @@ export default function BottomSheetApp({
     const onAdEarnedReward = rewarded.addAdEventListener(RewardedAdEventType.EARNED_REWARD, (reward) => {
       console.log('User earned reward:', reward);
       Alert.alert('Reward Earned', `You earned: ${reward.amount} ${reward.type}`);
+      rewarded.load();
+      setReloadKey((prev)=>prev+1)
     });
+ 
   
     rewarded.load();
   
     return () => {
       onAdLoaded(); // Cleanup listener
       onAdEarnedReward(); // Cleanup listener
+   
     };
   }, []);
   
@@ -79,14 +84,16 @@ export default function BottomSheetApp({
   };
 
   const handleGetWallpaper = () => {
+    
     if (adLoaded) {
       rewarded.show();
-      rewarded.load(); // Prepare the next ad
+     // rewarded.load(); // Prepare the next ad
       downloadImage();
       onClose();
     } else {
       Alert.alert('Ad Not Ready', 'Please wait for the ad to load.');
     }
+    return { adLoaded, reloadKey, rewarded };
   };
   
 
