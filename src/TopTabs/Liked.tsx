@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import BanerAds from '../Ads/BannerAds';
 import { useDispatch, useSelector } from 'react-redux';
 import { addtoliked } from '../redux/action';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 
 const SUGGESTIONS_DATA = [
@@ -24,78 +25,81 @@ const SUGGESTIONS_DATA = [
 ];
 
 export default function LikedScreen() {
-//   const [liked, setliked]=useState([])    
-//  const [pressed,setpressed]=useState(null)
-//  const [modalVisible,setModalVisible]=useState(false)
- const dispatch=useDispatch();
- const likedImages= useSelector((state)=>state.Likereducer.likedImages)
- const likeHandler=(item)=>{
-  console.warn("just clikable",item);
-  dispatch(addtoliked(item))
- }
- //const isLiked = likedImages.some((image) => image.id === item.id);
-  return (
-    // <View>
-    <View style={styles.likedScreenContainer}>
-     
-        <BanerAds/>
-      
-      {/* <View style={styles.profileContainer}>
-        <Image
-          source={require('../constants/Unknown_person.jpg')}
-          style={styles.profileImage}
-        />
-        <Pressable style={styles.editIcon}>
-          <Icon name="pencil" size={16} color="white" />
-        </Pressable>
-      </View> */}
-      
-      {likedImages.length > 0 ? (
-  <FlatList
-    data={likedImages.filter((item) => item && item.id)}
-    renderItem={({ item }) => (
-      <View style={styles.suggestionItem}>
-        <Image source={{ uri: item.image }} style={styles.suggestionImage} />
-      </View>
-    )}
-    keyExtractor={(item, index) => (item?.id ? item.id.toString() : index.toString())}
-    numColumns={2}
-    columnWrapperStyle={styles.columnWrapper}
-  />
-) : (
-  <View style={styles.favourite}>
-    <Text style={styles.noFavoritesText}>No favorites found</Text>
-    <Icon name="heart" size={70} color="red" />
-    <Text style={styles.subText}>(wallpapers you "like" will appear here)</Text>
-  </View>
-)}
+  const dispatch = useDispatch();
+  const likedImages = useSelector((state) => state.Likereducer.likedImages);
+  
+  const likeHandler = (item) => {
+    // Check if the image is already in the liked list
+    const isLiked = likedImages.some((image) => image.id === item.id);
+    if (!isLiked) {
+      dispatch(addtoliked(item));
+    } else {
+      console.warn('Image already liked.');
+    }
+  };
 
-   
+  const scale = useSharedValue(1);
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePress = () => {
+    scale.value = withSpring(1.5, { damping: 2 }, () => {
+      scale.value = withSpring(1);
+    });
+  };
+
+  return (
+    <View style={styles.likedScreenContainer}>
+      <BanerAds />
+
+      {/* Liked Images Section */}
+      {likedImages.length > 0 ? (
+        <FlatList
+          data={likedImages.filter((item) => item && item.id)} // Filter valid items
+          renderItem={({ item }) => (
+            <View style={styles.suggestionItem}>
+              <Image source={{ uri: item.image }} style={styles.suggestionImage} />
+            </View>
+          )}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={2}
+          columnWrapperStyle={styles.columnWrapper}
+        />
+      ) : (
+        <View style={styles.emptyStateContainer}>
+          <Animated.View style={[styles.downloadIconWrapper, animatedStyle]}>
+            <Pressable onPress={handlePress}>
+              <Icon name="heart" size={70} color="red" />
+            </Pressable>
+          </Animated.View>
+          <Text style={styles.noFavoritesText}>No Downloads Found</Text>
+          <Text style={styles.subText}>Downloaded Collections will appear here</Text>
+        </View>
+      )}
+
+      {/* Suggestions Header */}
       <Text style={styles.suggestionsHeader}>Suggestions for you</Text>
 
-     
-      {/* <View style={styles.container}> */}
+      {/* Suggestions List */}
       <FlatList
         data={SUGGESTIONS_DATA}
         renderItem={({ item }) => (
-          // <Pressable key={id} onPress={}>
           <View style={styles.suggestionItem}>
             <Image source={{ uri: item.image }} style={styles.suggestionImage} />
             <View style={styles.Overlays}>
-            <Pressable onPress={()=>likeHandler(item)}>
-            <Icon name="heart-outline" size={16} color="red" />
-            </Pressable>
+              <Pressable onPress={() => likeHandler(item)}>
+                <Icon name="heart-outline" size={16} color="red" />
+              </Pressable>
             </View>
           </View>
-          // </Pressable>
         )}
         keyExtractor={(item) => item.id.toString()}
-        showsVerticalScrollIndicator={true}
+        showsVerticalScrollIndicator={false}
         numColumns={2}
         columnWrapperStyle={styles.columnWrapper}
       />
-      </View>
-     //</View>
+    </View>
   );
 }
 
@@ -104,42 +108,29 @@ const styles = StyleSheet.create({
   likedScreenContainer: {
     flex: 1,
     alignItems: 'center',
-    // justifyContent: 'center',
     padding: 20,
     backgroundColor: '#f5f5f5',
   },
-  profileContainer: {
-    position: 'relative',
-    marginBottom: 20,
-  },
-  profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-  },
-  favourite:{
+  emptyStateContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding:5,
+    marginVertical: 20,
   },
-  editIcon: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    backgroundColor: 'black',
-    borderRadius: 12,
-    padding: 5,
+  downloadIconWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   noFavoritesText: {
     fontSize: 18,
     fontWeight: 'bold',
-    // marginTop: 10,
     color: '#333',
+    marginBottom: 5,
   },
   subText: {
-    fontSize: 18,
+    fontSize: 14,
     color: '#888',
-    marginBottom: 20,
+    textAlign: 'center',
   },
   suggestionsHeader: {
     fontSize: 20,
@@ -147,46 +138,32 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 10,
   },
-  Overlays:{
-    position:'absolute',
-    top:5,
-    right:5,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 15,
-    padding: 5,
-
-  },
-  // container:{
-  //   flex:1,
-  //   flexDirection:'row',
-  //   flexWrap:'wrap',
-  //   justifyContent:'space-around',
-  //   padding:10,
-  //   paddingBottom:'58%'
-  // },
   suggestionItem: {
-   position: 'relative',
+    position: 'relative',
     marginBottom: 20,
     width: '47%',
-    borderRadius:10,
-    overflow:'hidden',
-    shadowColor:'#000',
-    shadowOffset:{width:0,height:2},
-    shadowOpacity:0.25,
-    shadowRadius:3.84,
-
+    borderRadius: 10,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   suggestionImage: {
     width: '100%',
     height: 200,
     borderRadius: 10,
-    // shadowColor: '#000',
-    // shadowOffset: {width: 0, height: 2},
-    // shadowOpacity: 0.8,
-    // shadowRadius: 2,
-    // elevation: 5,
   },
-  columnWrapper:{
-    justifyContent:'space-between'
-  }
+  columnWrapper: {
+    justifyContent: 'space-between',
+  },
+  Overlays: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 15,
+    padding: 5,
+  },
 });
+
