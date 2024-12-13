@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import RNFetchBlob from 'react-native-blob-util';
 import { AdEventType, RewardedAd, RewardedAdEventType, TestIds } from 'react-native-google-mobile-ads';
+import { downloadImage } from '../constants/Downloads';
 
 export default function BottomSheetApp({
   visible,
@@ -55,40 +56,40 @@ export default function BottomSheetApp({
   }, []);
   
 
-  const downloadImage = async () => {
-    try {
-      const { config, fs } = RNFetchBlob;
-      const date = new Date();
-      const filePath = `${fs.dirs.DownloadDir}/wallpaper_${date.getTime()}.jpg`;
+  // const downloadImage = async () => {
+  //   try {
+  //     const { config, fs } = RNFetchBlob;
+  //     const date = new Date();
+  //     const filePath = `${fs.dirs.DownloadDir}/wallpaper_${imageName}_${date.getTime()}.jpg`;
 
-      config({
-        fileCache: true,
-        addAndroidDownloads: {
-          useDownloadManager: true,
-          notification: true,
-          path: filePath,
-          description: 'Downloading wallpaper',
-        },
-      })
-        .fetch('GET', imageUri)
-        .then((res) => {
-          Alert.alert('Download Successful', `Image saved to: ${res.path()}`);
-        })
-        .catch((error) => {
-          console.error('Download Error:', error);
-          Alert.alert('Download Failed', 'Could not download the image.');
-        });
-    } catch (error) {
-      console.error('Permission Error:', error);
-    }
-  };
+  //     config({
+  //       fileCache: true,
+  //       addAndroidDownloads: {
+  //         useDownloadManager: true,
+  //         notification: true,
+  //         path: filePath,
+  //         description: 'Downloading wallpaper',
+  //       },
+  //     })
+  //       .fetch('GET', imageUri)
+  //       .then((res) => {
+  //         Alert.alert('Download Successful', `Image saved to: ${res.path()}`);
+  //       })
+  //       .catch((error) => {
+  //         console.error('Download Error:', error);
+  //         Alert.alert('Download Failed', 'Could not download the image.');
+  //       });
+  //   } catch (error) {
+  //     console.error('Permission Error:', error);
+  //   }
+  // };
 
   const handleGetWallpaper = () => {
     
     // if (adLoaded) {
     //   rewarded.show();
      // rewarded.load(); // Prepare the next ad
-      downloadImage();
+      downloadImage(imageUri,imageName);
       onClose();
     // } else {
     //   Alert.alert('Ad Not Ready', 'Please wait for the ad to load.');
