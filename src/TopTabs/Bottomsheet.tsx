@@ -85,15 +85,15 @@ export default function BottomSheetApp({
 
   const handleGetWallpaper = () => {
     
-    if (adLoaded) {
-      rewarded.show();
+    // if (adLoaded) {
+    //   rewarded.show();
      // rewarded.load(); // Prepare the next ad
       downloadImage();
       onClose();
-    } else {
-      Alert.alert('Ad Not Ready', 'Please wait for the ad to load.');
-    }
-    return { adLoaded, reloadKey, rewarded };
+    // } else {
+    //   Alert.alert('Ad Not Ready', 'Please wait for the ad to load.');
+    // }
+    // return { adLoaded, reloadKey, rewarded };
   };
   
 

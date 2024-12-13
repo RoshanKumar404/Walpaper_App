@@ -1,6 +1,7 @@
 import {
   Image,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -15,6 +16,15 @@ import { useDispatch } from 'react-redux';
 export default function Suggested() {
   const [pressed, setpressed] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
 
   const imagePressed = image => {
     setpressed(image); 
@@ -181,7 +191,12 @@ export default function Suggested() {
           
         </ScrollView>
       </View>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}
+       //contentContainerStyle={styles.scrollView}
+       refreshControl={
+         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+       }
+      >
         {HorizontalScrollViewImages.map((image, id) => (
           <Pressable key={id} onPress={() => imagePressed(image)}>
             <View style={styles.cardContainer}>

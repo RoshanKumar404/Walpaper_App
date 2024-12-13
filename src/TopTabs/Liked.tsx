@@ -73,8 +73,8 @@ export default function LikedScreen() {
               <Icon name="heart" size={70} color="red" />
             </Pressable>
           </Animated.View>
-          <Text style={styles.noFavoritesText}>No Downloads Found</Text>
-          <Text style={styles.subText}>Downloaded Collections will appear here</Text>
+          <Text style={styles.noFavoritesText}>No Liked Found</Text>
+          <Text style={styles.subText}>Liked Collections will appear here</Text>
         </View>
       )}
 

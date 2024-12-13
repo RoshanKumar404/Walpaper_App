@@ -7,6 +7,7 @@ import {
   Image,
   Dimensions,
   Pressable,
+  Alert,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -15,7 +16,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BanerAds from '../Ads/BannerAds';
-
+import { downloadImage } from '../constants/Downloads';
+ 
 const SUGGESTIONS_DATA = [
   { id: 1, image: 'https://images.pexels.com/photos/14551191/pexels-photo-14551191.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load' },
   { id: 2, image: 'https://images.pexels.com/photos/12397837/pexels-photo-12397837.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
@@ -24,7 +26,34 @@ const SUGGESTIONS_DATA = [
 ];
 
 const { width } = Dimensions.get('window');
+// import RNFetchBlob from 'react-native-blob-util';
+// export const downloadImage = async (imageUri) => {
+//     try {
+//       const { config, fs } = RNFetchBlob;
+//       const date = new Date();
+//       const filePath = `${fs.dirs.DownloadDir}/wallpaper_${date.getTime()}.jpg`;
 
+//       config({
+//         fileCache: true,
+//         addAndroidDownloads: {
+//           useDownloadManager: true,
+//           notification: true,
+//           path: filePath,
+//           description: 'Downloading wallpaper',
+//         },
+//       })
+//         .fetch('GET',imageUri)
+//         .then((res) => {
+//           Alert.alert('Download Successful', `Image saved to: ${res.path()}`);
+//         })
+//         .catch((error) => {
+//           console.error('Download Error:', error);
+//           Alert.alert('Download Failed', 'Could not download the image.');
+//         });
+//     } catch (error) {
+//       console.error('Permission Error:', error);
+//     }
+//   };
 export default function LibraryScreen() {
   const scale = useSharedValue(1);
 
@@ -37,41 +66,54 @@ export default function LibraryScreen() {
       scale.value = withSpring(1);
     });
   };
-
+const HandlePressimage=(imageUri)=>{
+  downloadImage(imageUri)
+  Alert.alert("pressed")
+}
   const renderSuggestionItem = ({ item }) => (
+    <Pressable  onPress={()=>HandlePressimage(item.image)}>
     <View style={styles.suggestionItem}>
+      
       <Image source={{ uri: item.image }} style={styles.suggestionImage} />
+      
     </View>
+    </Pressable>
   );
 
   return (
     <View style={styles.container}>
-      
+
       <BanerAds />
 
-      
+
       <View style={styles.header}>
-      
+
         <Text style={styles.headerText}>No Downloads Found</Text>
-       <View style={styles.downloadIconContainer}>
-        <Animated.View style={[styles.downloadIconWrapper, animatedStyle]}>
-          <Pressable onPress={handlePress}>
-            <Icon name="cloud-download-outline" size={70} color="red" />
-          </Pressable>
-        </Animated.View>
-      </View>
+        <View style={styles.downloadIconContainer}>
+          <Animated.View style={[styles.downloadIconWrapper, animatedStyle]}>
+            <Pressable onPress={handlePress}>
+              <Icon name="cloud-download-outline" size={70} color="red" />
+            </Pressable>
+          </Animated.View>
+        </View>
         <Text style={styles.subHeaderText}>
           (Downloaded Collections will appear here)
         </Text>
       </View>
       <Text style={styles.suggestionsTitle}>Suggestions for you</Text>
-      <FlatList
+     
+           <FlatList
+
         data={SUGGESTIONS_DATA}
         renderItem={renderSuggestionItem}
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}
         contentContainerStyle={styles.suggestionsList}
       />
+      
+      
+     
+
     </View>
   );
 }
@@ -91,7 +133,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   downloadIconContainer: {
-    marginVertical: 10, 
+    marginVertical: 10,
     backgroundColor: '#fff',
     width: 100,
     height: 100,

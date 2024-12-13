@@ -3,10 +3,14 @@ import React from 'react'
 
 export default function Accounts() {
   return (
-    <View>
+    <View style={{backgroundColor:"blue"}}>
       <Text>Accounts</Text>
     </View>
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  Container:{
+    color:"#000"
+  }
+})
